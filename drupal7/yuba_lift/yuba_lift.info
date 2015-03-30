@@ -1,0 +1,7 @@
+name = Yuba Lift
+description = Extends LIFT Functionality.
+
+dependencies[] = acquia_lift
+
+package = Personalization
+core = 7.x

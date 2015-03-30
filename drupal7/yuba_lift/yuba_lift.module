@@ -1,0 +1,72 @@
+<?php
+
+/*----------------------------------------------------------------------------
+      SETUP & CONFIG
+----------------------------------------------------------------------------*/
+
+/*----------------------------------------------------------------------------
+      DRUPAL HOOKS
+----------------------------------------------------------------------------*/
+
+/**
+ * Implements hook_page_build();
+ */
+function yuba_lift_page_build(&$page) {
+  // build values corresponding to our context options
+  $values = array(
+    'car_color' => t('Red'),
+    'destination' => t('Beach'),
+  );
+
+  // add the options' values to JS data, and load separate JS file
+  $page['page_top']['yuba_lift'] = array(
+    '#attached' => array(
+      'js' => array(
+        drupal_get_path('module', 'yuba_lift') . '/js/yuba_lift.js' => array(),
+        array(
+          'data' => array(
+            'yuba_lift' => array(
+              'contexts' => $values,
+            ),
+          ),
+          'type' => 'setting'
+        ),
+      ),
+    )
+  );
+}
+
+/*----------------------------------------------------------------------------
+      MODULE HOOKS
+----------------------------------------------------------------------------*/
+
+/**
+ * Implements hook_ctools_plugin_api();
+ */
+function yuba_lift_ctools_plugin_api($owner, $api) {
+  if ($owner == 'personalize' && $api == 'personalize') {
+    return array('version' => 1);
+  }
+}
+
+/**
+ * Implements hook_personalize_visitor_contexts();
+ */
+function yuba_lift_personalize_visitor_context() {
+  $info = array();
+  $path = drupal_get_path('module', 'yuba_lift') . '/plugins';
+
+  $info['yuba_lift'] = array(
+    'path' => $path . '/visitor_context',
+    'handler' => array(
+      'file' => 'YubaLift.inc',
+      'class' => 'YubaLift',
+    ),
+  );
+
+  return $info;
+}
+
+/*----------------------------------------------------------------------------
+      INTERNAL / HELPERS
+----------------------------------------------------------------------------*/
